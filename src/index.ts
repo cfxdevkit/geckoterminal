@@ -1,24 +1,48 @@
 /**
  * GeckoTerminal API Client
  * @packageDocumentation
+ *
+ * This module provides a TypeScript client for interacting with the GeckoTerminal API.
+ * It includes comprehensive type definitions and utilities for working with DEX data.
  */
 
 // Core exports
-export { GeckoTerminal, GeckoTerminalAPI } from "./core";
+export { GeckoTerminal } from "./core/geckoterminal";
+export { GeckoTerminalAPI } from "./core/api";
 
-// Export all types that are referenced in the public API
+// Export all response types
 export type {
-    // Response types
-    PoolsResponse,
-    TokenInfo,
-    MultiTokenResponse,
-    MultiPoolResponse,
-    OHLCVResponse,
-    NetworkDexesResponse,
-    NetworksResponse,
-    TrendingPoolsResponse,
-    SimpleTokenPriceResponse,
-    // Base types
-    Pool,
-    Token,
+  // Base types
+  BaseAttributes,
+
+  // Core entity types
+  Token,
+  Pool,
+  Network,
+  NetworkDex,
+  Trade,
+
+  // Response types
+  PoolsResponse,
+  TokenInfo,
+  TokenInfoMetadataResponse,
+  MultiTokenResponse,
+  MultiPoolResponse,
+  OHLCVResponse,
+  OHLCVDataPoint,
+  NetworkDexesResponse,
+  NetworksResponse,
+  TrendingPoolsResponse,
+  SimpleTokenPriceResponse,
+  TradesResponse,
+
+  // Formatted types
+  FormattedNetwork,
+  FormattedDex,
+  FormattedOHLCV,
+  FormattedTokenPrice,
+  FormattedPool,
 } from "./types/responses";
+
+// Export formatters
+export { formatUtils } from "./formatters";

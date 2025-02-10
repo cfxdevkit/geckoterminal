@@ -1,3 +1,80 @@
+import type {
+  Network,
+  NetworkDex,
+  OHLCVDataPoint,
+  Pool,
+  FormattedNetwork,
+  FormattedDex,
+  FormattedOHLCV,
+  FormattedTokenPrice,
+  FormattedPool,
+} from "../types/responses";
+
+export const formatNetwork = (network: Network): FormattedNetwork => ({
+  name: network.attributes.name,
+  identifier: network.attributes.identifier,
+  description: network.attributes.description,
+  logoUrl: network.attributes.logo_url,
+  isMainnet: network.attributes.is_mainnet,
+});
+
+export const formatDex = (dex: NetworkDex): FormattedDex => ({
+  name: dex.attributes.name,
+  identifier: dex.attributes.identifier,
+  description: dex.attributes.description,
+  logoUrl: dex.attributes.logo_url,
+  website: dex.attributes.website,
+});
+
+export const formatOHLCV = (data: OHLCVDataPoint): FormattedOHLCV => ({
+  datetime: data.datetime,
+  open: data.open,
+  high: data.high,
+  low: data.low,
+  close: data.close,
+  volume: data.volume,
+});
+
+export const formatTokenPrice = (
+  address: string,
+  data: { price_usd: string; volume_24h?: string; market_cap?: string }
+): FormattedTokenPrice => {
+  const formatted: FormattedTokenPrice = {
+    address,
+    priceUSD: data.price_usd,
+  };
+
+  if (data.volume_24h) {
+    formatted.volume24h = data.volume_24h;
+  }
+
+  if (data.market_cap) {
+    formatted.marketCap = data.market_cap;
+  }
+
+  return formatted;
+};
+
+export const formatPool = (pool: Pool): FormattedPool => ({
+  name: pool.attributes.name,
+  price: pool.attributes.base_token_price_usd,
+  volume24h: pool.attributes.volume_usd.h24,
+  trades24h: {
+    total: pool.attributes.transactions.h24.buys + pool.attributes.transactions.h24.sells,
+    buys: pool.attributes.transactions.h24.buys,
+    sells: pool.attributes.transactions.h24.sells,
+  },
+  priceChange24h: pool.attributes.price_change_percentage.h24,
+  poolAddress: pool.attributes.address,
+  baseTokenAddress: pool.relationships.base_token.data.id,
+  quoteTokenAddress: pool.relationships.quote_token.data.id,
+  createdAt: pool.attributes.pool_created_at,
+  reserveUSD: pool.attributes.reserve_in_usd,
+  baseTokenPriceUSD: pool.attributes.base_token_price_usd,
+  quoteTokenPriceUSD: pool.attributes.quote_token_price_usd,
+  baseTokenPriceNative: pool.attributes.base_token_price_native,
+});
+
 export const formatUtils = {
   number: (num: number | string): string => {
     if (!num) return "0";

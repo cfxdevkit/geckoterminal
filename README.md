@@ -1,21 +1,22 @@
-# @cfxdevkit/defillama
+# @cfxdevkit/geckoterminal
 
-A TypeScript library for interacting with the DeFi Llama API, providing easy access to DeFi protocol and chain TVL (Total Value Locked) data with optional analysis features.
+A TypeScript library for interacting with the GeckoTerminal API, providing easy access to DEX pools, tokens, and trading data on the Conflux Network and other chains.
 
-[![npm version](https://img.shields.io/npm/v/@cfxdevkit/defillama)](https://www.npmjs.com/package/@cfxdevkit/defillama)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/cfxdevkit/defillama/ci.yml)](https://github.com/cfxdevkit/defillama/actions)
-[![Coverage Status](https://codecov.io/gh/cfxdevkit/defillama/branch/main/graph/badge.svg)](https://codecov.io/gh/cfxdevkit/defillama)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@cfxdevkit/defillama)](https://bundlephobia.com/package/@cfxdevkit/defillama)
+[![npm version](https://img.shields.io/npm/v/@cfxdevkit/geckoterminal)](https://www.npmjs.com/package/@cfxdevkit/geckoterminal)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/cfxdevkit/geckoterminal/ci.yml)](https://github.com/cfxdevkit/geckoterminal/actions)
+[![Coverage Status](https://codecov.io/gh/cfxdevkit/geckoterminal/branch/main/graph/badge.svg)](https://codecov.io/gh/cfxdevkit/geckoterminal)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@cfxdevkit/geckoterminal)](https://bundlephobia.com/package/@cfxdevkit/geckoterminal)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![Node Version](https://img.shields.io/node/v/@cfxdevkit/defillama)](https://www.npmjs.com/package/@cfxdevkit/defillama)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/cfxdevkit/defillama/pulls)
+[![Node Version](https://img.shields.io/node/v/@cfxdevkit/geckoterminal)](https://www.npmjs.com/package/@cfxdevkit/geckoterminal)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/cfxdevkit/geckoterminal/pulls)
 
 ## Features
 
 - 🚀 Full TypeScript support with comprehensive type definitions
-- 📊 Access to DeFi Llama's protocol and chain TVL data
-- 📈 Optional data analysis and formatting capabilities
+- 📊 Access to GeckoTerminal's DEX pools and token data
+- 💱 Real-time trading information and price data
+- 📈 Built-in data formatting and utility functions
 - 🔍 Detailed error handling and logging
 - 📝 Well-documented API methods
 - ⚡ Modern ES6+ syntax
@@ -23,185 +24,148 @@ A TypeScript library for interacting with the DeFi Llama API, providing easy acc
 ## Installation
 
 ```bash
-npm install @cfxdevkit/defillama
+npm install @cfxdevkit/geckoterminal
 ```
 
 ## Quick Start
 
 ```typescript
-import { DeFiLlama } from '@cfxdevkit/defillama';
+import { GeckoTerminal } from '@cfxdevkit/geckoterminal';
 
-const defiLlama = new DeFiLlama();
+const client = new GeckoTerminal();
 
-// Get TVL data for a specific protocol
-const protocolTVL = await defiLlama.getProtocolTVL('uniswap');
+// Get all networks
+const networks = await client.getNetworks();
 
-// Get historical TVL data for a chain with analysis
-const chainTVL = await defiLlama.getHistoricalChainTVL('ethereum', true);
+// Get DEXes for Conflux network
+const dexes = await client.getNetworkDexes('cfx');
+
+// Get top pools for Swappi on Conflux
+const pools = await client.getTopPools('cfx', 'swappi');
 ```
 
 ## Examples
 
-### Error Handling
-
-The library includes comprehensive error handling for invalid inputs:
+### Network and DEX Information
 
 ```typescript
-const defiLlama = new DeFiLlama();
+const client = new GeckoTerminal();
 
-try {
-  // This will throw an error for non-existent protocol
-  await defiLlama.getProtocolTVL('non-existent-protocol');
-} catch (error) {
-  console.error('Error:', error.message);
-  // Output: Error: HTTP error! status: 400
-}
+// Get all supported networks
+const networks = await client.getNetworks();
 
-try {
-  // This will throw an error for invalid chain
-  await defiLlama.getHistoricalChainTVL('invalid-chain');
-} catch (error) {
-  console.error('Error:', error.message);
-  // Output: Error: HTTP error! status: 400
-}
+// Get DEXes for a specific network
+const dexes = await client.getNetworkDexes('cfx');
 ```
 
-### Protocol Methods
+### Pool Information
 
-#### Get All Protocols
 ```typescript
-const protocols = await defiLlama.getProtocols();
-// Returns array of protocols with details like:
-// [
-//   {
-//     id: '2269',
-//     name: 'Binance CEX',
-//     url: 'https://www.binance.com',
-//     description: 'Binance is a cryptocurrency exchange...',
-//     chain: 'Multi-Chain',
-//     tvl: 144318054315.48734,
-//     chainTvls: {
-//       Ethereum: 40481829144.37302,
-//       Bitcoin: 55798161484.458565,
-//       // ... other chains
-//     }
-//   },
-//   // ... other protocols
-// ]
+// Get top pools for a specific DEX
+const topPools = await client.getTopPools('cfx', 'swappi');
+
+// Get trending pools
+const trendingPools = await client.getTrendingPools('cfx', '24h');
+
+// Get new pools
+const newPools = await client.getNewPools('cfx');
+
+// Get specific pool information
+const poolInfo = await client.getPoolInfo('cfx', 'pool_address');
+
+// Get pool OHLCV data
+const ohlcv = await client.getPoolOHLCV('cfx', 'pool_address', 'hour', {
+    limit: '3'
+});
 ```
 
-#### Get Protocol TVL with Analysis
+### Token Information
+
 ```typescript
-// Get formatted TVL data with analysis
-const swappiTVL = await defiLlama.getProtocolTVL('swappi', true);
-// Returns detailed analysis:
-// {
-//   protocolInfo: {
-//     name: 'Swappi',
-//     currentChainTvls: { Conflux: '$9.71M' }
-//     // ... other protocol info
-//   },
-//   tvlAnalysis: {
-//     overall: {
-//       currentTVL: '$9.71M',
-//       averageTVL: '$14.39M',
-//       totalChange: '-76.15%'
-//     },
-//     yearlyAnalysis: [
-//       {
-//         year: 2023,
-//         average: '$15.94M',
-//         percentageChange: '+348.77%'
-//       }
-//       // ... other years
-//     ]
-//   }
-// }
+// Get token information
+const tokenInfo = await client.getTokenInfo('cfx', 'token_address');
+
+// Get pools for a specific token
+const tokenPools = await client.getTokenPools('cfx', 'token_address');
+
+// Get multiple token information
+const multiTokenInfo = await client.getMultiTokenInfo('cfx', ['token1', 'token2']);
+
+// Get simple token prices
+const tokenPrices = await client.getSimpleTokenPrices('cfx', ['token1', 'token2'], true, true);
 ```
 
-#### Get Current Protocol TVL
+### Search Functionality
+
 ```typescript
-const currentTVL = await defiLlama.getCurrentProtocolTVL('abc-pool');
-// Returns: 9611050.44
+// Search for pools
+const searchResults = await client.searchPools('WETH', 'cfx');
 ```
 
-### Chain Methods
+### Formatting Utilities
 
-#### Get All Chains
-```typescript
-const chains = await defiLlama.getChains();
-// Returns array of chains with details like:
-// [
-//   {
-//     name: 'Harmony',
-//     chainId: 1666600000,
-//     tvl: 1790390.10,
-//     tokenSymbol: 'ONE'
-//   }
-//   // ... other chains
-// ]
-```
+The library includes various formatting utilities for data presentation:
 
-#### Get Historical Chain TVL with Analysis
 ```typescript
-const ethereumTVL = await defiLlama.getHistoricalChainTVL('ethereum', true);
-// Returns detailed analysis:
-// {
-//   chainAnalysis: {
-//     overall: {
-//       currentTVL: '$56.24B',
-//       averageTVL: '$29.97B',
-//       totalChange: '+13918890.65%'
-//     },
-//     yearlyAnalysis: [
-//       {
-//         year: 2023,
-//         average: '$20.70B',
-//         percentageChange: '+429.86%'
-//       }
-//       // ... other years
-//     ]
-//   }
-// }
+import { formatUtils } from '@cfxdevkit/geckoterminal';
+
+// Format currency
+formatUtils.currency(1234.5678); // "$1,234.57"
+formatUtils.compactCurrency(1234567); // "$1.23M"
+
+// Format percentages
+formatUtils.percentage(12.345); // "12.35%"
+formatUtils.changePercent(-12.345); // "-12.35%"
+
+// Format dates
+formatUtils.date(1612137600); // "2021-02-01 00:00:00"
+formatUtils.monthYear(new Date("2024-02-15")); // "February 2024"
+
+// Classify volatility
+formatUtils.volatility(0.75); // "High"
 ```
 
 ## API Reference
 
-### Protocols
+### Networks and DEXes
 
-#### Get All Protocols
+#### Get Networks
 ```typescript
-const protocols = await defiLlama.getProtocols();
+const networks = await client.getNetworks();
 ```
 
-#### Get Protocol TVL
+#### Get Network DEXes
 ```typescript
-// Get raw TVL data
-const rawTVL = await defiLlama.getProtocolTVL('protocol-name');
-
-// Get formatted TVL data with analysis
-const formattedTVL = await defiLlama.getProtocolTVL('protocol-name', true);
+const dexes = await client.getNetworkDexes('cfx');
 ```
 
-#### Get Current Protocol TVL
+### Pools
+
+#### Get Top Pools
 ```typescript
-const currentTVL = await defiLlama.getCurrentProtocolTVL('protocol-name');
+const pools = await client.getTopPools('cfx', 'swappi');
 ```
 
-### Chains
-
-#### Get All Chains
+#### Get Trending Pools
 ```typescript
-const chains = await defiLlama.getChains();
+const trending = await client.getTrendingPools('cfx', '24h');
 ```
 
-#### Get Historical Chain TVL
+#### Get Pool Information
 ```typescript
-// Get raw historical TVL data
-const rawChainTVL = await defiLlama.getHistoricalChainTVL('chain-name');
+const info = await client.getPoolInfo('cfx', 'pool_address');
+```
 
-// Get formatted historical TVL data with analysis
-const formattedChainTVL = await defiLlama.getHistoricalChainTVL('chain-name', true);
+### Tokens
+
+#### Get Token Information
+```typescript
+const token = await client.getTokenInfo('cfx', 'token_address');
+```
+
+#### Get Token Prices
+```typescript
+const prices = await client.getSimpleTokenPrices('cfx', ['token_address']);
 ```
 
 ## Development
@@ -215,8 +179,8 @@ const formattedChainTVL = await defiLlama.getHistoricalChainTVL('chain-name', tr
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/cfxdevkit/defillama.git
-cd defillama
+git clone https://github.com/cfxdevkit/geckoterminal.git
+cd geckoterminal
 ```
 
 2. Install dependencies:
@@ -228,18 +192,10 @@ npm install
 
 - `npm run build` - Build the library
 - `npm run test` - Run tests
+- `npm run test:coverage` - Run tests with coverage
 - `npm run lint` - Lint the code
 - `npm run format` - Format the code
-- `npm run docs` - Generate documentation
 - `npm run example` - Run example usage script
-
-### Running Examples
-
-The library includes example usage in the `examples` directory. To run the examples:
-
-```bash
-npm run example
-```
 
 ## Contributing
 
@@ -253,9 +209,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Links
 
-- [GitHub Repository](https://github.com/cfxdevkit/defillama)
-- [Issue Tracker](https://github.com/cfxdevkit/defillama/issues)
-- [Documentation](https://cfxdevkit.github.io/defillama)
+- [GitHub Repository](https://github.com/cfxdevkit/geckoterminal)
+- [Issue Tracker](https://github.com/cfxdevkit/geckoterminal/issues)
+- [Documentation](https://cfxdevkit.github.io/geckoterminal)
 
 ## License
 
@@ -263,4 +219,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [DeFi Llama](https://defillama.com/) for providing the API
+- [GeckoTerminal](https://www.geckoterminal.com/) for providing the API
