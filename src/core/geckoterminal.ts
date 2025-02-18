@@ -203,20 +203,42 @@ export class GeckoTerminal extends GeckoTerminalAPI {
    *
    * @example
    * ```typescript
-   * const info = await client.getPoolTokensInfo('cfx', '0x123...');
-   * console.log(info.data[0].attributes.name);
+   * const info = await client.getPoolTokensMetadata('cfx', '0x123...');
+   * console.log(info[0].attributes.name);
    * ```
    */
-  async getPoolTokensInfo(
+  async getPoolTokensMetadata(
     network: string = this.network,
     poolAddress: string
-  ): Promise<TokenInfoMetadataResponse> {
+  ): Promise<TokenInfoMetadataResponse[]> {
     logger.debug(`Getting token info for pool: ${poolAddress}`);
-    return this.fetchApi<TokenInfoMetadataResponse>(
+    return this.fetchApi<TokenInfoMetadataResponse[]>(
       `networks/${network}/pools/${poolAddress}/info`
     );
   }
 
+  /**
+   * Get token info for pool tokens
+   *
+   * @param network - Network identifier (defaults to constructor network)
+   * @param tokenAddress - Address of the token
+   * @returns Promise with detailed token information
+   *
+   * @example
+   * ```typescript
+   * const info = await client.getTokensMetadata('cfx', '0x123...');
+   * console.log(info[0].attributes.name);
+   * ```
+   */
+  async getTokensMetadata(
+    network: string = this.network,
+    tokenAddress: string
+  ): Promise<TokenInfoMetadataResponse> {
+    logger.debug(`Getting token info for pool: ${tokenAddress}`);
+    return this.fetchApi<TokenInfoMetadataResponse>(
+      `networks/${network}/tokens/${tokenAddress}/info`
+    );
+  }
   /**
    * Get information about multiple pools
    *
@@ -403,5 +425,24 @@ export class GeckoTerminal extends GeckoTerminalAPI {
       params.network = network;
     }
     return this.fetchApi<PoolsResponse>("search/pools", params);
+  }
+
+  /**
+   * Get information about tokens that were recently updated
+   *
+   * @param page - Page number for pagination (starts at 1)
+   * @returns Promise with array of recently updated token information
+   *
+   * @example
+   * ```typescript
+   * const recentTokens = await client.getRecentlyUpdatedTokenInfo();
+   * console.log(recentTokens[0].data.attributes.name);
+   * ```
+   */
+  async getRecentlyUpdatedTokenInfo(page = 1): Promise<TokenInfoMetadataResponse[]> {
+    logger.debug("Getting recently updated token information");
+    return this.fetchApi<TokenInfoMetadataResponse[]>("tokens/info_recently_updated", {
+      page: String(page),
+    });
   }
 }

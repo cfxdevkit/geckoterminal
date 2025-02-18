@@ -247,7 +247,7 @@ export interface TokenInfoMetadataResponse {
       /** Last metadata update timestamp */
       metadata_updated_at: string | null;
     };
-  }[];
+  };
 }
 
 /**
