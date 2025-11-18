@@ -27,12 +27,15 @@ export class GeckoTerminalAPI {
     protected apiKey?: string,
     protected customBaseUrl?: string
   ) {
-    logger.debug("Initializing GeckoTerminalAPI", {
-      network,
-      hasApiKey: !!apiKey,
-      baseUrl: customBaseUrl || this.BASE_URL,
-      apiVersion: this.API_VERSION,
-    });
+    logger.debug(
+      {
+        network,
+        hasApiKey: !!apiKey,
+        baseUrl: customBaseUrl || this.BASE_URL,
+        apiVersion: this.API_VERSION,
+      },
+      "Initializing GeckoTerminalAPI"
+    );
   }
 
   /**
@@ -63,13 +66,16 @@ export class GeckoTerminalAPI {
       };
 
       const fullUrl = url.toString();
-      logger.debug("Making API request", {
-        method: "GET",
-        url: fullUrl,
-        endpoint: normalizedEndpoint,
-        headers,
-        params,
-      });
+      logger.debug(
+        {
+          method: "GET",
+          url: fullUrl,
+          endpoint: normalizedEndpoint,
+          headers,
+          params,
+        },
+        "Making API request"
+      );
 
       const response = await fetch(fullUrl, { headers });
 
@@ -79,37 +85,49 @@ export class GeckoTerminalAPI {
         responseHeaders[key] = value;
       });
 
-      logger.debug("Received API response", {
-        url: fullUrl,
-        status: response.status,
-        statusText: response.statusText,
-        headers: responseHeaders,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        logger.error("API request failed", {
+      logger.debug(
+        {
           url: fullUrl,
           status: response.status,
           statusText: response.statusText,
-          errorText,
-        });
+          headers: responseHeaders,
+        },
+        "Received API response"
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        logger.error(
+          {
+            url: fullUrl,
+            status: response.status,
+            statusText: response.statusText,
+            errorText,
+          },
+          "API request failed"
+        );
         throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
       }
 
       const data = await response.json();
-      logger.debug("Successfully parsed response data", {
-        url: fullUrl,
-        endpoint: normalizedEndpoint,
-        dataKeys: Object.keys(data),
-      });
+      logger.debug(
+        {
+          url: fullUrl,
+          endpoint: normalizedEndpoint,
+          dataKeys: Object.keys(data),
+        },
+        "Successfully parsed response data"
+      );
       return data;
     } catch (error) {
-      logger.error("Error in API request", {
-        endpoint,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      });
+      logger.error(
+        {
+          endpoint,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        },
+        "Error in API request"
+      );
       throw error;
     }
   }
